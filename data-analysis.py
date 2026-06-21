@@ -11,7 +11,30 @@ import os
 
 
 # Aufgabe 2
+df_income = pd.read_csv('vie-bez-inc-sex-2002f.csv', sep=';', skiprows=1) 
+df_bezirke = pd.read_csv('wien-bezirke.csv', sep=';')
 
+df_merged = pd.merge(df_income, df_bezirke, on='DISTRICT_CODE', how='left')
+
+df_grouped = df_merged.groupby(['DISTRICT_CODE', 'DISTRICT_NAME'])['AVERAGE_NETINCOME_TOTAL'].sum().reset_index()
+
+df_grouped['AVERAGE_NETINCOME_PERCENTILE'] = pd.qcut(
+    df_grouped['AVERAGE_NETINCOME_TOTAL'], 
+    q=4, 
+    labels=[0.25, 0.5, 0.75, 1.0]
+)
+
+final_columns = [
+    'DISTRICT_CODE', 
+    'DISTRICT_NAME', 
+    'AVERAGE_NETINCOME_TOTAL', 
+    'AVERAGE_NETINCOME_PERCENTILE'
+]
+df_final = df_grouped[final_columns]
+df_final = df_final.sort_values(by='DISTRICT_CODE', ascending=True)
+
+df_final.to_csv('aufgabe2_ergebnis.csv', index=False)
+df_final
 
 
 
