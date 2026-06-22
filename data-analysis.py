@@ -6,7 +6,16 @@ import os
 
 
 # Aufgabe 1
-
+df_filtered = df[df["REF_YEAR"].isin([2017, 2018, 2019, 2020])]
+result = df_filtered.groupby("REF_YEAR")[
+    ["GROSSINCOME_TOTAL", "GROSSINCOME_MEN", "GROSSINCOME_WOMEN"]
+].sum()
+result["GROSSINCOME_RATIO_MEN_WOMEN"] = (
+    result["GROSSINCOME_MEN"] / result["GROSSINCOME_WOMEN"]
+).round(2)
+result = result.sort_values("GROSSINCOME_TOTAL", ascending=False)
+result.to_csv("question-1.csv")
+result
 
 
 
@@ -40,7 +49,25 @@ df_final
 
 
 # Aufgabe 3
+years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
+districts = [91300, 91400, 91500, 91600, 91700, 91800, 91900, 92000, 92100, 92200, 92300]
 
+df_q3 = df[
+    df["REF_YEAR"].isin(years) &
+    df["DISTRICT_CODE"].isin(districts)
+]
+
+result_q3 = pd.DataFrame([{
+    "AVERAGE_GROSSINCOME_TOTAL": round(df_q3["GROSSINCOME_TOTAL"].mean(), 2),
+    "MEDIAN_GROSSINCOME_TOTAL":  round(df_q3["GROSSINCOME_TOTAL"].median(), 2),
+    "STD_GROSSINCOME_TOTAL":     round(df_q3["GROSSINCOME_TOTAL"].std(), 2)
+}])
+
+# Verhindert wissenschaftliche Notation
+pd.set_option("display.float_format", "{:.2f}".format)
+
+result_q3.to_csv("question-3.csv", index=False)
+result_q3
 
 
 
